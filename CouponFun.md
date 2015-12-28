@@ -4,6 +4,12 @@
 Install virtual machine software
 - VMware
 
+Configure VMware to enable virtual printers
+- Open VMWare Player
+- `Player | File | Preferences ...`
+- Enable option Enable Virtual Printers 
+
+
 Grab a low-memory VM from a legal source... maybe `IE8 on XP` to run in `VMware`...
 - http://modern.ie
 
