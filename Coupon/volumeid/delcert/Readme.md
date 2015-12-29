@@ -1,12 +1,7 @@
 Format of a Signed File
 -----------------------
 
-A signed file is a standard Windows PE executable with signature data appended to it. <br>
-A PE file begins with a 16-bit MSDOS executable stub (which just prints a message that you can't run the program and exits).<br>
-Following this is the real data, organised in a COFF-like format. <br>
-The general COFF header which is always present is followed by another header which contains information on executables (it's referred to as an optional header, but it's always present for executables).<br>
-This header defines a number of data directories which contain data sections within the executable.<br>
-One of these directory entries is an (undocumented) `IMAGE_DIRECTORY_ENTRY_SECURITY`, which is used to store the signature: Hash the entire file, add a security directory entry large enough to contain the signature, and write the signature at that position in the file.
+A signed file is a standard Windows PE executable with signature data appended to it. A PE file begins with a 16-bit MSDOS executable stub (which just prints a message that you can't run the program and exits). Following this is the real data, organised in a COFF-like format. The general COFF header which is always present is followed by another header which contains information on executables (it's referred to as an optional header, but it's always present for executables). This header defines a number of data directories which contain data sections within the executable. One of these directory entries is an (undocumented) `IMAGE_DIRECTORY_ENTRY_SECURITY`, which is used to store the signature: Hash the entire file, add a security directory entry large enough to contain the signature, and write the signature at that position in the file.
 
 The signing process is as follows:
 
@@ -19,11 +14,9 @@ The signing process is as follows:
    of the file, since it's simply appended to the existing data.
 4. Update the file checksum.
 
-The security information begins with a 32-bit length (which is ignored) and a 32-bit flags field which should be set to 0x00020200.<br>
-Most of the flags are unused, although changing the first `0x02` to a `1` gives an invalid signature, and changing the second one to anything other than `0x02` results in the signature check silently failing with no error message or other indication.
+The security information begins with a 32-bit length (which is ignored) and a 32-bit flags field which should be set to `0x00020200`. Most of the flags are unused, although changing the first `0x02` to a `1` gives an invalid signature, and changing the second one to anything other than `0x02` results in the signature check silently failing with no error message or other indication.
 
-Immediately following this is a complex `PKCS #7 signature record` which contains a detached signature for the rest of the file.<br>
-The outer wrapper is `PKCS #7 signedData`, with the signed content being an `spcIndirectDataContext` (an MS-defined data type) which contains an (obsolete) spcPelmageData record and an MD5 hash of the file.  The exact format is:
+Immediately following this is a complex `PKCS #7 signature record` which contains a detached signature for the rest of the file. The outer wrapper is `PKCS #7 signedData`, with the signed content being an `spcIndirectDataContext` (an MS-defined data type) which contains an (obsolete) spcPelmageData record and an MD5 hash of the file.  The exact format is:
 
 ```
     SEQUENCE {
@@ -51,32 +44,31 @@ The outer wrapper is `PKCS #7 signedData`, with the signed content being an `spc
   }
 ```
 
-where the x's are the MD5 hash of the file and the content-type for the whole is `spcIndirectDataContext (1 3 6 1 4 1 311 2 1 4)`. <br> 
-You can use a toolkit such as cryptlib to generate this type of data, as well as creating the special AuthentiCode certs you need for the signing.
+where the x's are the MD5 hash of the file and the content-type for the whole is `spcIndirectDataContext (1 3 6 1 4 1 311 2 1 4)`. You can use a toolkit such as cryptlib to generate this type of data, as well as creating the special AuthentiCode certs you need for the signing.
 
-The signed content is followed by the standard PKCS #7 signedData fields, first
+The signed content is followed by the standard `PKCS #7 signedData` fields, first
 a certificate chain containing a complete chain of certs from a known CA to an
 end-users AuthentiCode signing certificate and then information on the signer
 (that is, data to identify the AuthentiCode certificate which signed the whole
 thing), an identifier for the hash algorithm used (again, MD5), and some
 authenticated attributes.  These contain more MS-defined attributes, typically
-spcSpOpusInfo and spcStatementType which are used to provide information on the
+`spcSpOpusInfo` and `spcStatementType` which are used to provide information on the
 signer (eg whether they're using an individual or commercial signing
-certificate).  Also included is a messageDigest attribute which contains the
-MD5 hash of the spcIndirectDataContext content of the signedData.  Finally, the
+certificate).  Also included is a `messageDigest` attribute which contains the
+MD5 hash of the `spcIndirectDataContext` content of the signedData.  Finally, the
 authenticated attributes are hashed and signed, with the signature being
 included at the end of the collection of signature information (this is the
-standard PKCS #7 signature process).  Again, this is standard stuff which you
+standard `KCS #7 signature` process).  Again, this is standard stuff which you
 can create using cryptlib.
 
 To create the signature, you need to hash the entire file (skipping the
 checksum and `IMAGE_DIRECTORY_ENTRY_SECURITY` as explained above) and write the
-hash into the spcIndirectDataContext content record.  Then hash this and write
+hash into the `spcIndirectDataContext` content record.  Then hash this and write
 the hash and other attributes into the authenticated attributes.  Finally, hash
 the authenticated attributes and append the signature to the end of the
 signature record.  This means that each collection of data is covered by its
 own hash, which is then passed up the chain to the next level until it reaches
 the signature.  If you're using an existing crypto toolkit to do this, create a
-PKCS #7 signedData item, set the content-type to spcIndirectDataContext, drop
-in the spcIndirectDataContext content itself, and sign it, the rest will be
-handled by the PKCS #7 signing code.
+`PKCS #7 signedData` item, set the content-type to `spcIndirectDataContext`, drop
+in the `spcIndirectDataContext` content itself, and sign it, the rest will be
+handled by the `PKCS #7 signing` code.
