@@ -11,7 +11,7 @@ Configure VMware to enable virtual printers
 
 
 Grab a low-memory VM from a legal source... maybe `IE8 on XP` to run in `VMware`...
-- http://modern.ie
+- <a href="http://modern.ie" target="_blank">http://modern.ie</a>
 
 Add the following file and directory to your OS to allow VM installation <br>
 -  `C:\vmok\vmok.txt` and the file can be empty
