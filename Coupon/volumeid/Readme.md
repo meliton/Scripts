@@ -25,7 +25,6 @@ To remedy this, you'll need to modify the binary with a hex editor. You can foll
 
 
 ####Volume ID v2.0 <br>
-http://technet.microsoft.com/en-us/sysinternals/bb897436.aspx
 
 
 When you run volumeid.exe it first asks you to accept the license agreement.<br>
