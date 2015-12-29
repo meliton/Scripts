@@ -24,7 +24,7 @@ When you first run this program, it ask you to accept the license agreement then
 To remedy this, you'll need to modify the binary with a hex editor. You can follow the steps below to see how this is accomplished.
 
 
-Volume ID v2.0 <br>
+####Volume ID v2.0 <br>
 http://technet.microsoft.com/en-us/sysinternals/bb897436.aspx
 
 
@@ -32,7 +32,7 @@ When you run volumeid.exe it first asks you to accept the license agreement.<br>
 If you are going to use it, then of course you "agree" with it.<br>
 
 Here's the problem. When you run it, it adds registry crap, specifically:<br>
-HKCU\Software\Sysinternals   ... whether or not you accept the license.
+`HKCU\Software\Sysinternals`   ... whether or not you accept the license.
 
 Let's fix that crap... and make it portable, and smaller...<br>
 
