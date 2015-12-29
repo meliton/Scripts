@@ -4,7 +4,7 @@ Volumeid.exe is a really good program at changing a hard drive's serial number.
 
 You can find it on the technet website here
 
-https://technet.microsoft.com/en-us/sysinternals/bb897436.aspx
+<a href="https://technet.microsoft.com/en-us/sysinternals/bb897436.aspx" target="_blank">Technet Microsoft Sysinternals VolumeID</a>
 
 
 
