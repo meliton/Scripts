@@ -41,18 +41,28 @@ First, run `delcert` to strip off the digital certificate.<br>
 You can find `delcert` here: <br>
 http://forum.xda-developers.com/showthread.php?p=2508061#post2508061
 
+The reason you need to strip off the certificate is that once you start hex editing the binary, the certificate will become invalid. Stripping off the digital certificate also makes the binary smaller.
 
-`81 EC 10 01 00 00` `-->` C3, RETURN FROM FUNCTION RIGHT OFF THE BAT<br>
 
-IT CREATES UNNEEDED ORPHAN CODE (THE REGISTRY READ/WRITE STUFF)<br>
+Use your hex editor and search for the following:
+
+`81 EC 10 01 00 00` <br>
+
+We'll be using two opcodes to fix the binary<br>
+`C3` means `RETN` or Return from procedure<br>
+`90` means `NOP` or No Operation
+
+
+`81 EC 10 01 00 00` <br>
+CREATES UNNEEDED ORPHAN CODE (THE REGISTRY READ/WRITE STUFF)<br>
 TO CREATE AND THEN CLEAR THE ORPHAN CODE...<br>
 
 FIND...<br>
 
-`81 EC 10 01 00 00`  `-->` REPLACE WITH<br>
+`81 EC 10 01 00 00`  `-->` THEN REPLACE WITH<br>
 `C3 90 90 90 90 90`  `-->` TO NOP ALL THE WAY TO THE END OF ORPHAN CODE<br>
 
-`81 C4 10 01 00 00 C3 90`  	`-->` THE END OF THE ORPHAN CODE...<br>
+`81 C4 10 01 00 00 C3 90`  	`-->` IS THE END OF THE ORPHAN CODE...<br>
 `90 90 90 90 90 90 90 90`		`-->` NOP IT ALL... IT'S 655 BYTES OF NOPS <br>	
 
 NEXT...<br>
