@@ -113,7 +113,7 @@ ping 127.0.0.1 -n 2
 regedit /s vol_add.reg
 ping 127.0.0.1 -n 2 
 del /Q vol_add.reg
-exit
+EXIT
 ```
 The batch file dynamically creates the `vol_add.reg` file, uses ping to create a two-second pause to give time for the file to be created, runs the `vol_add.reg` file, then uses ping to wait another two seconds for the registry to be written to, then deletes the `vol_add.reg` file. 
 
