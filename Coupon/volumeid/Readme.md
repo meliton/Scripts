@@ -80,12 +80,23 @@ There is a two-file fix and a one-file fix.
 
 #####Two-File Fix
 
-Create a batch file called `Volume01.bat` with the following:
+Create a batch file called `Volume01.bat` with the following info inside:
 
     @ECHO OFF
     regedit /s vol_add.reg
     EXIT
 
+Create another file called `vol_add.reg` with the following info inside:
 
+    Windows Registry Editor Version 5.00
+    
+    [HKEY_CURRENT_USER\Software\Sysinternals]
+    
+    [HKEY_CURRENT_USER\Software\Sysinternals\VolumeID]
+    "EulaAccepted"=dword:00000001
+
+Now, run `Volume01.bat` and it will add the appropriate registry entry to allow you to run `volumeid.exe` without the `VolumeID License Agreement` popup.
+
+#####One-File Fix
 
 
