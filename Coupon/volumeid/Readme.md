@@ -37,7 +37,7 @@ Let's fix that crap... and make it portable, and smaller...<br>
 
 
 First, run `delcert` to strip off the digital certificate.<br>
-You can find `delcert` here: <br>
+You can find `delcert` here (or in the `delcert` folder: <br>
 http://forum.xda-developers.com/showthread.php?p=2508061#post2508061
 
 The reason you need to strip off the certificate is that once you start hex editing the binary, the certificate will become invalid. Stripping off the digital certificate also makes the binary smaller.
