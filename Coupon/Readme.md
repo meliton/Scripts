@@ -1,6 +1,5 @@
 ## The Coupon Challenge
 
-
 Install virtual machine software
 - VMware
 
@@ -17,7 +16,7 @@ Add the following file and directory to your OS to allow VM installation <br>
 -  `C:\vmok\vmok.txt` and the file can be empty
 
 
-Set up your hard drive to remember (persistent) or forget changes (non-persistent)
+Set up your hard drive to remember (persistent) or forget changes (non-persistent)<br>
 ** You use only ONE of these lines and at it in your .vmx config **
 
     ide0:0.mode = "independent-persistent"  
@@ -31,6 +30,6 @@ To get around this pesky little road block, open `regedit` and navigate to
 `HKLM\SYSTEM\CurrentControlSet\Services\Disk\Enum`
 
 Change it to something like `Disk_IDE_Hard_Drive`..... <br>
-...you can make a regedit to make it work.
+- Use `FixDisk.reg` from the `src` folder
 
 
