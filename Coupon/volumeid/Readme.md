@@ -21,10 +21,10 @@ In addition, you should shut down any applications you have running before chang
 
 When you first run this program, it ask you to accept the license agreement then adds a registry entry showing that you accepted the agreement. This is not explicitly stated on the technet website.
 
-To remedy this, you'll need to modify the binary with a hex editor. You can follow the steps below to see how this is accomplished.
+There are two ways to fix this. One way is to modify the binary with a hex editor. Another way is to automatically enter the registry string into the registry before running the program.
 
 
-####Volume ID v2.0 <br>
+####Modify Volume ID v2.0 Binary<br>
 
 
 When you run volumeid.exe it first asks you to accept the license agreement.<br>
@@ -73,5 +73,19 @@ NEXT...<br>
 `909090900000000052`		`-->` TO THIS... (IT'S THE END OF THE LICENSE TEXT) <br>
 
 FOR EDUCATIONAL PURPOSES
+
+####Automatic Registry Edit
+
+There is a two-file fix and a one-file fix.
+
+#####Two-File Fix
+
+Create a batch file called `Volume01.bat` with the following:
+
+    @ECHO OFF
+    regedit /s vol_add.reg
+    EXIT
+
+
 
 
