@@ -1,7 +1,6 @@
 /* 	Fixes VMWare Bios UUID and MAC Address to Randomize the VM 
 
-Works only on VMware virtual machines called 'XPSP3_Coupon' and specifically
-on its .vmx file
+Works only on VMware virtual machine .vmx file
 	
 	- Generates random bios.uuid and runs it as a system command to fix .vmx file
 			uuid.bios = "56 4d 0e 84 f8 f6 7b b3-52 a1 b5 5f 15 83 82 b5"
@@ -13,7 +12,8 @@ on its .vmx file
 		and adds the following lines in .vmx file
 			ethernet0.address = "00:50:56:[00-3F]:YY:ZZ"
 			ethernet0.addressType = "static"
-	- Delete the temp files it creates... aaa.txt and bbb.txt
+	- Delete the temp files it creates... aaa.txt, bbb.txt and fff.txt
+        - Automatically recognizes .vmx file in current directory
 
 
 NOTE: "00:50:56:XX:YY:ZZ" where XX is a valid hex number between 00 and 3F 
@@ -28,7 +28,6 @@ I limited the XX value between 00-99 to avoid MAC address conflicts
 TODO - Use other OUI's besides  00:50:56   <-- already programmed
 				00:0C:29   <-- not programmed
 				00:05:69   <-- not programmed
-	 - Automatically recognize .vmx file in current directory
 	 - Randomize memory size, maybe between 1.8 gigs to 2.4 gigs
 	 
 	tcc -o fixuuid.exe UUID_Fix.c
@@ -70,9 +69,24 @@ str[ i ] = '\0';
 
 int main(void)
 {
- //	1st, Remove lines with ethernet0.generatedAddress, addressOffset, addressType, and uuid.bios 
+ // 1st, let's get the vmx filename into a temp file and then into a variable
+  char cmdGetVMX[100];	// create array to store output of dir /b *.vmx command 
+  sprintf(cmdGetVMX, "dir /b *.vmx >fff.txt \n");
+  system(cmdGetVMX);	// run the system command stored in the array
+  
+  char cVMX[500];   // read file into char array cVMX 
+  FILE *fptr;
+  if ((fptr=fopen("fff.txt","r"))==NULL){
+      printf("Error opening file! VMX file not found... exiting");
+      exit(1);     // Program exits if file pointer returns NULL 
+  }
+  fscanf(fptr,"%[^\n]",cVMX);
+  fclose(fptr);
+  printf("VMX file found = %s \n",cVMX);
+
+ // 2nd, Remove lines with ethernet0.generatedAddress, addressOffset, addressType, and uuid.bios 
   char cmdKillUUID[100];	// create array to store uuid command 
-  sprintf(cmdKillUUID, "findstr /v \"uuid.bios\" XPSP3_Coupon.vmx >aaa.txt \n");
+  sprintf(cmdKillUUID, "findstr /v \"uuid.bios\" %s >aaa.txt \n",cVMX);
   system(cmdKillUUID);		// run the system command stored in the array  
   
   char cmdKillEth[100];	// create array to store generatedAddress and generatedAddressOffset command 
@@ -80,10 +94,10 @@ int main(void)
   system(cmdKillEth);		// run the system command stored in the array
   
   char cmdKillType[100];	// create array to store address and addressType command 
-  sprintf(cmdKillType, "findstr /v \"ethernet0.address\" bbb.txt >XPSP3_Coupon.vmx \n");
+  sprintf(cmdKillType, "findstr /v \"ethernet0.address\" bbb.txt >%s \n",cVMX);
   system(cmdKillType);		// run the system command stored in the array 
    
-  // 2nd, add created 32-hex digit bios.uuid and 12-hex digit MAC 
+  // 3rd, add created 32-hex digit bios.uuid and 12-hex digit MAC 
   char aHex[34];			// hex digit random array
   char a0123[10];			// random 0123 array. Need only one digit
   rand_hex(aHex, 34);
@@ -96,17 +110,17 @@ int main(void)
   printf("ethernet0.addressType = \"static\"\n");
   	
   char cmdAddUUID[128];	// create array to store add uuid.bios command 
-  sprintf(cmdAddUUID, "echo uuid.bios = \"%.2s %.2s %.2s %.2s %.2s %.2s %.2s %.2s-%.2s %.2s %.2s %.2s %.2s %.2s %.2s %.2s\" >>XPSP3_Coupon.vmx \n", 
+  sprintf(cmdAddUUID, "echo uuid.bios = \"%.2s %.2s %.2s %.2s %.2s %.2s %.2s %.2s-%.2s %.2s %.2s %.2s %.2s %.2s %.2s %.2s\" >>%s \n", 
 	aHex, &aHex[2], &aHex[4], &aHex[6], &aHex[8], &aHex[10], &aHex[12], &aHex[14], &aHex[16], &aHex[18], &aHex[20], 
-	&aHex[22], &aHex[24], &aHex[26], &aHex[28], &aHex[30]);
+	&aHex[22], &aHex[24], &aHex[26], &aHex[28], &aHex[30], cVMX);
   system(cmdAddUUID);	// run the system command stored in the array
   
   char cmdAddEth0[128];	// create array to store add ethernet0.address command 
-  sprintf(cmdAddEth0, "echo ethernet0.address = \"00:50:56:%.1s%.1s:%.2s:%.2s\" >>XPSP3_Coupon.vmx \n", &a0123[4], &aHex[29], &aHex[21], &aHex[5]);
+  sprintf(cmdAddEth0, "echo ethernet0.address = \"00:50:56:%.1s%.1s:%.2s:%.2s\" >>%s \n", &a0123[4], &aHex[29], &aHex[21], &aHex[5], cVMX);
   system(cmdAddEth0);	// run the system command stored in the array
   
   char cmdAddStatic[100];	// create array to store add ethernet0.addressType = "static" command 
-  sprintf(cmdAddStatic, "echo ethernet0.addressType = \"static\" >>XPSP3_Coupon.vmx \n");
+  sprintf(cmdAddStatic, "echo ethernet0.addressType = \"static\" >>%s \n",cVMX);
   system(cmdAddStatic);	// run the system command stored in the array
   
   char cmdDelTXT[100];	// create array to store del *.txt command 
