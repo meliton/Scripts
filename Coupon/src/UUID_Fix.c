@@ -2,9 +2,9 @@
 
 Works only on VMware virtual machine .vmx file
 	
-	- Generates random bios.uuid and runs it as a system command to fix .vmx file
+     - Generates random bios.uuid and runs it as a system command to fix .vmx file
 			uuid.bios = "56 4d 0e 84 f8 f6 7b b3-52 a1 b5 5f 15 83 82 b5"
-	- Generates random MAC address by removing the following lines in .vmx file
+     - Generates random MAC address by removing the following lines in .vmx file
 			ethernet0.generatedAddress
 			ethernet0.generatedAddressOffset
 			ethernet0.address
@@ -12,9 +12,9 @@ Works only on VMware virtual machine .vmx file
 		and adds the following lines in .vmx file
 			ethernet0.address = "00:50:56:[00-3F]:YY:ZZ"
 			ethernet0.addressType = "static"
-	- Delete the temp files it creates... aaa.txt, bbb.txt and fff.txt
-        - Automatically recognizes .vmx file in current directory
-
+     - Deletes the temp files it creates... aaa.txt, bbb.txt, ccc.txt and fff.txt
+     - Automatically recognizes .vmx file in current directory
+     - Randomizes memory size between 1,808 megs and 2,400 megs
 
 NOTE: "00:50:56:XX:YY:ZZ" where XX is a valid hex number between 00 and 3F 
 and YY and ZZ are valid hex numbers between 00 and FF. 
@@ -28,7 +28,6 @@ I limited the XX value between 00-99 to avoid MAC address conflicts
 TODO - Use other OUI's besides  00:50:56   <-- already programmed
 				00:0C:29   <-- not programmed
 				00:05:69   <-- not programmed
-	 - Randomize memory size, maybe between 1.8 gigs to 2.4 gigs
 	 
 	tcc -o fixuuid.exe UUID_Fix.c
 	
@@ -67,6 +66,31 @@ str[ i++ ] = '\n';
 str[ i ] = '\0';  
 }
 
+void randMem(int mSize)
+{
+int r;
+int a = 1;
+int mSize = 2048;    // set default memory size
+
+srand((unsigned int) time(0));  // seed number for rand
+
+while( a < 2000 )     // large loop to find values in range
+ {
+  r=rand();
+   if (r < 601)
+	{
+	 if (r > 451)
+	 {
+	  mSize = (4 * r);
+ 	  break;
+     }
+    }
+   a++;
+ }
+printf("%d/%d calcs, memory size = %d megs\n", a,r,mSize);
+return(mSize);
+} 
+
 int main(void)
 {
  // 1st, let's get the vmx filename into a temp file and then into a variable
@@ -84,7 +108,7 @@ int main(void)
   fclose(fptr);
   printf("VMX file found = %s \n",cVMX);
 
- // 2nd, Remove lines with ethernet0.generatedAddress, addressOffset, addressType, and uuid.bios 
+ // 2nd, Remove lines with ethernet0.generatedAddress, addressOffset, addressType, memsize, and uuid.bios 
   char cmdKillUUID[100];	// create array to store uuid command 
   sprintf(cmdKillUUID, "findstr /v \"uuid.bios\" %s >aaa.txt \n",cVMX);
   system(cmdKillUUID);		// run the system command stored in the array  
@@ -94,9 +118,13 @@ int main(void)
   system(cmdKillEth);		// run the system command stored in the array
   
   char cmdKillType[100];	// create array to store address and addressType command 
-  sprintf(cmdKillType, "findstr /v \"ethernet0.address\" bbb.txt >%s \n",cVMX);
+  sprintf(cmdKillType, "findstr /v \"ethernet0.address\" bbb.txt >ccc.txt \n");
   system(cmdKillType);		// run the system command stored in the array 
-   
+
+  char cmdKillMemsize[100];	// create array to store memsize command 
+  sprintf(cmdKillMemsize, "findstr /v \"memsize\" ccc.txt >%s \n",cVMX);
+  system(cmdKillMemsize);		// run the system command stored in the array 
+
   // 3rd, add created 32-hex digit bios.uuid and 12-hex digit MAC 
   char aHex[34];			// hex digit random array
   char a0123[10];			// random 0123 array. Need only one digit
@@ -122,7 +150,14 @@ int main(void)
   char cmdAddStatic[100];	// create array to store add ethernet0.addressType = "static" command 
   sprintf(cmdAddStatic, "echo ethernet0.addressType = \"static\" >>%s \n",cVMX);
   system(cmdAddStatic);	// run the system command stored in the array
-  
+
+  // 4th, add memory size between 1808 megs and 2400 megs 
+  int w;    // declare w variable
+  char cmdAddMem[100];	// create array to store memsize = "####" command 
+  sprintf(cmdAddMem, "echo memsize = \"%d\" >>%s \n", randMem(w), cVMX);
+  system(cmdAddMem);	// run the system command stored in the array
+
+  // 5th, cleanup temp files  
   char cmdDelTXT[100];	// create array to store del *.txt command 
   sprintf(cmdDelTXT, "del /q *.txt \n");
   system(cmdDelTXT);	// run the system command stored in the array  
