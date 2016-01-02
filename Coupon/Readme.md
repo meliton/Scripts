@@ -16,16 +16,15 @@ Next, you'll need an operating system supported by the coupon printing software.
 Once you install your OS in VMware, you'll need to add the following file and directory to your OS to allow VM installation <br>
 -  `C:\vmok\vmok.txt` and the file can be empty
 
+Now, you'll need to shutdown your virtual machine and make some configuration changes to the `.vmx` file of your virtual machine. The `.vmx` file typically be found at `Computer | My Documents | Virtual Machines` folder. Use a text editor to make changes to the file.<br>
 
-Set up your hard drive to remember (persistent) or forget changes (non-persistent)<br>
-** You use only ONE of these lines and at it in your .vmx config **
+Your hard drive can be set up to remember (persistent) or forget changes (non-persistent)<br>
+We want the VM to forget, so we will add the non-persistent line at the bottom of the `.vmx` file.<br>
 
+NOTE: You use only ONE of these lines and add it in your .vmx config<br>
 For IDE drives<br>
-    `ide0:0.mode = "independent-persistent"  `<br>
     `ide0:0.mode = "independent-nonpersistent" ` <br>
-
 For SCSI drives<br>
-    `scsi0:0.mode = "independent-persistent"  `<br>
     `scsi0:0.mode = "independent-nonpersistent" ` <br>
 	
 
