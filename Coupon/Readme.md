@@ -1,28 +1,32 @@
 ## The Coupon Challenge
 
-Install virtual machine software
-- VMware
+I came across some coupon printing software that does not play nice with your computer. Specifically, it does not uninstall cleanly. The fix for this is to install this in a virtual machine. Guess what... it doesn't install in a VM... or does it... hence, The Coupon Challenge.
 
-Configure VMware to enable virtual printers
+First step. Get yourself good quality virtual machine software with non-persistent drives and printing capabilities.
+- VMware Player. Get the latest version from your favorite software source.
+
+Once you install VMware, you'll need to enable virtual printer support.
 - Open VMWare Player
 - `Player | File | Preferences ...`
-- Enable option Enable Virtual Printers 
+- Enable the option `Enable Virtual Printers` 
 
+Next, you'll need an operating system supported by the coupon printing software. You can grab a low-memory VM from a legal source like `IE8 on XP` and run that in `VMware`... I'm using XP because of it's small memory footprint.
+- The <a href="http://modern.ie" target="_blank">modern.ie website</a> has a whole supply of them. 
 
-Grab a low-memory VM from a legal source... maybe `IE8 on XP` to run in `VMware`...
-- <a href="http://modern.ie" target="_blank">modern.ie website</a>
-
-Add the following file and directory to your OS to allow VM installation <br>
+Once you install your OS in VMware, you'll need to add the following file and directory to your OS to allow VM installation <br>
 -  `C:\vmok\vmok.txt` and the file can be empty
 
 
 Set up your hard drive to remember (persistent) or forget changes (non-persistent)<br>
 ** You use only ONE of these lines and at it in your .vmx config **
 
-    ide0:0.mode = "independent-persistent"  
-    ide0:0.mode = "independent-nonpersistent"  
-    scsi0:0.mode = "independent-persistent"  
-    scsi0:0.mode = "independent-nonpersistent"  
+For IDE drives<br>
+    `ide0:0.mode = "independent-persistent"  `<br>
+    `ide0:0.mode = "independent-nonpersistent" ` <br>
+
+For SCSI drives<br>
+    `scsi0:0.mode = "independent-persistent"  `<br>
+    `scsi0:0.mode = "independent-nonpersistent" ` <br>
 	
 
 Also, after every reboot, you'll need to change the registry entry to rename VMWare Drive.
