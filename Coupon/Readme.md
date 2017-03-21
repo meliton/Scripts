@@ -10,7 +10,7 @@ Once you install VMware, you'll need to enable virtual printer support.
 - `Player | File | Preferences ...`
 - Enable the option `Enable Virtual Printers` 
 
-Next, you'll need an operating system supported by the coupon printing software. You can grab a low-memory VM from a legal source like `IE8 on XP` and run that in `VMware`... I'm using XP because of it's small memory footprint.
+Next, you'll need an operating system supported by the coupon printing software. You can grab a low-memory VM from a legal source like `IE8 on Win7` and run that in `VMware`...
 - The <a href="http://modern.ie" target="_blank">modern.ie website</a> has a whole supply of them. 
 
 Once you install your OS in VMware, you'll need to add the following file and directory to your OS to allow VM installation <br>
